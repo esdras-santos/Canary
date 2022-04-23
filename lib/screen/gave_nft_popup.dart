@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nftrenter/screen/utils/nft_image.dart';
 
 import '../nft_mockups.dart';
+import 'utils/interfaces.dart';
 
 class GaveNFTPopup extends StatefulWidget {
   String tag;
   int index;
-  GaveNFTPopup({Key? key, required this.tag, required this.index})
+  Map nft;
+  GaveNFTPopup({Key? key, required this.tag, required this.index, required this.nft})
       : super(key: key);
 
   @override
@@ -17,7 +20,9 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
   Mockups mock = Mockups();
   int rentperiod = 0;
   String rentamount = "0.0";
-  
+  Interfaces inter = Interfaces();
+  NFTImage ni = NFTImage();
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -56,6 +61,33 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                       ),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    child: Center(
+                      child:FutureBuilder<Map>(
+                        future: ni.getImageFromToken(widget.nft["ERC721"], widget.nft["id"]),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Image.memory(
+                                    snapshot.data!["png"],
+                                    width: 650,
+                                    height: 550,
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ),
                   Expanded(
                     child: Container(
@@ -69,9 +101,9 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                             SizedBox(
                               height: 30,
                             ),
-                            Text(mock.nfts[widget.index]["collectionname"]),
+                            Text(widget.nft["name"]),
                             Text(
-                              mock.nfts[widget.index]["id"],
+                              widget.nft["id"],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
@@ -81,9 +113,19 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                 SizedBox(
                                   width: 30,
                                 ),
-                                Text("Confirmed Royalties: ",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                                // this information need to be taken from the network 
-                                Text("0.0 CKB",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                                Text(
+                                  "Confirmed Royalties: ",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                                // this information need to be taken from the network
+                                Text(
+                                  "0.0 KAI",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
                               ],
                             ),
                             SizedBox(height: 10),
@@ -92,9 +134,19 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                 SizedBox(
                                   width: 30,
                                 ),
-                                Text("Future Royalties: ",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                                // this information need to be taken from the network 
-                                Text("0.0 CKB",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                                Text(
+                                  "Future Royalties: ",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                                // this information need to be taken from the network
+                                Text(
+                                  "0.0 CKB",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
                               ],
                             ),
                             SizedBox(height: 40),
@@ -102,11 +154,9 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                               height: 55.0,
                               width: 300,
                               child: RaisedButton(
-                                onPressed: () {
-                                  
-                                },
-                                shape:
-                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                onPressed: () {},
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
                                 padding: EdgeInsets.all(0.0),
                                 child: Ink(
                                   decoration: BoxDecoration(
@@ -119,10 +169,11 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                           Colors.green,
                                         ],
                                       ),
-                                      borderRadius: BorderRadius.circular(10.0)),
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
                                   child: Container(
-                                    constraints:
-                                        BoxConstraints(maxWidth: 300, minHeight: 20.0),
+                                    constraints: BoxConstraints(
+                                        maxWidth: 300, minHeight: 20.0),
                                     alignment: Alignment.center,
                                     child: Text(
                                       "Get Confirmed Royalties",
@@ -142,11 +193,17 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                               height: 55.0,
                               width: 300,
                               child: RaisedButton(
-                                onPressed: () {
-                                  
+                                onPressed: () async {
+                                  final tx = await inter.canary().send(
+                                      "withdrawNFT", [
+                                    widget.nft["ERC721"],
+                                    widget.nft["id"]
+                                  ]);
+                                  tx.wait();
+                                  print(tx.hash);
                                 },
-                                shape:
-                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
                                 padding: EdgeInsets.all(0.0),
                                 child: Ink(
                                   decoration: BoxDecoration(
@@ -159,10 +216,11 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                           Colors.green,
                                         ],
                                       ),
-                                      borderRadius: BorderRadius.circular(10.0)),
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
                                   child: Container(
-                                    constraints:
-                                        BoxConstraints(maxWidth: 300, minHeight: 20.0),
+                                    constraints: BoxConstraints(
+                                        maxWidth: 300, minHeight: 20.0),
                                     alignment: Alignment.center,
                                     child: Text(
                                       "Withdraw NFT",
@@ -191,4 +249,3 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
     ));
   }
 }
-

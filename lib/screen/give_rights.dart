@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'utils/interfaces.dart';
+
 class GiveRights extends StatefulWidget {
   const GiveRights({Key? key}) : super(key: key);
 
@@ -12,53 +14,109 @@ class _GiveRightsState extends State<GiveRights> {
   String nftid = "";
   String dailyprice = "";
   String mp = "";
+  String mh = "";
+  Interfaces inter = Interfaces();
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(height: 50,),
+        SizedBox(
+          height: 50,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("ERC721 address: ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+            Text(
+              "ERC721 address: ",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             textField("address"),
           ],
         ),
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("NFT ID:        ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+            Text(
+              "NFT ID:        ",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             textField("id")
           ],
         ),
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Daily Price:  ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+            Text(
+              "Daily Price:  ",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             textField("dp")
           ],
         ),
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Max Period (in days):  ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+            Text(
+              "Max Period (in days):  ",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             textField("mp")
           ],
         ),
-        SizedBox(height: 30,),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Max Right Holders:  ",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            textField("mh")
+          ],
+        ),
+        SizedBox(
+          height: 30,
+        ),
         Container(
           height: 55.0,
           width: 300,
           child: RaisedButton(
-            onPressed: () {
-              
+            onPressed: () async {
+              inter.erc721(E721).send("approve", [
+                "0xDB75ECA09b0911e530741F52fdA0Ae862892aFE5",
+                nftid
+              ]).then((value) {
+                value.wait();
+                inter.canary().send(
+                  "depositNFT",
+                  [
+                    E721,
+                    nftid,
+                    dailyprice,
+                    mp,
+                    mh,
+                  ],
+                ).then((value) {
+                  value.wait();
+                  print(value.hash);
+                });
+                
+              });
             },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
             padding: EdgeInsets.all(0.0),
             child: Ink(
               decoration: BoxDecoration(
@@ -73,8 +131,7 @@ class _GiveRightsState extends State<GiveRights> {
                   ),
                   borderRadius: BorderRadius.circular(10.0)),
               child: Container(
-                constraints:
-                    BoxConstraints(maxWidth: 300, minHeight: 20.0),
+                constraints: BoxConstraints(maxWidth: 300, minHeight: 20.0),
                 alignment: Alignment.center,
                 child: Text(
                   "Give Rights",
@@ -98,10 +155,9 @@ class _GiveRightsState extends State<GiveRights> {
       padding: const EdgeInsets.only(left: 8.0),
       width: 360,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.grey[200],
-        border: Border.all(color: Colors.black)
-      ),
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.grey[200],
+          border: Border.all(color: Colors.black)),
       child: TextFormField(
         textAlign: TextAlign.left,
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -119,9 +175,11 @@ class _GiveRightsState extends State<GiveRights> {
             } else if (field == "id") {
               nftid = value;
             } else if (field == "dp") {
-              dailyprice = toCKb(value);
+              dailyprice = toKAI(value);
             } else if (field == "mp") {
               mp = value;
+            } else if (field == "mh") {
+              mh = value;
             }
           });
         },
@@ -129,18 +187,18 @@ class _GiveRightsState extends State<GiveRights> {
     );
   }
 
-  String toCKb(String value) {
+  String toKAI(String value) {
     var sv = value.split(".");
     if (int.parse(sv[0]) > 0) {
-      if (sv[1].length < 8) {
-        for (int i = sv[1].length; i <= 8; i++) {
+      if (sv[1].length < 18) {
+        for (int i = sv[1].length; i <= 18; i++) {
           sv[1] = sv[1] + "0";
         }
       }
       return sv[0] + sv[1];
     } else {
-      if (sv[1].length < 8) {
-        for (int i = sv[1].length; i <= 8; i++) {
+      if (sv[1].length < 18) {
+        for (int i = sv[1].length; i <= 18; i++) {
           sv[1] = sv[1] + "0";
         }
       }

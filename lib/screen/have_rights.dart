@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nftrenter/screen/show_nft_popup.dart';
 import 'package:nftrenter/screen/utils/hero_dialog_route.dart';
+import 'package:nftrenter/screen/utils/metamask.dart';
+import 'package:nftrenter/screen/utils/nft_image.dart';
 
 import '../nft_mockups.dart';
 
 class HaveRights extends StatefulWidget {
-  const HaveRights({ Key? key }) : super(key: key);
+  const HaveRights({Key? key}) : super(key: key);
 
   @override
   State<HaveRights> createState() => _HaveRightsState();
@@ -13,6 +15,16 @@ class HaveRights extends StatefulWidget {
 
 class _HaveRightsState extends State<HaveRights> {
   Mockups mock = Mockups();
+  MetaMaskProvider mp = MetaMaskProvider();
+  List<Map> rightsOver = [];
+  NFTImage ni = NFTImage();
+
+  @override
+  void initState() {
+    super.initState();
+    mock.getRightsOf(mp.currentAddress).then((value) => rightsOver = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -21,7 +33,7 @@ class _HaveRightsState extends State<HaveRights> {
       mainAxisSpacing: 1.0,
       shrinkWrap: true,
       children: List.generate(
-        mock.nfts.length,
+        rightsOver.length,
         (index) {
           return nftcard(index);
         },
@@ -33,11 +45,11 @@ class _HaveRightsState extends State<HaveRights> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-          return ShowNFTPopup(tag: mock.nfts[index]["id"], index: index);
+          return ShowNFTPopup(tag: rightsOver[index]["id"], index: index, nft: rightsOver[index],);
         }));
       },
       child: Hero(
-        tag: mock.nfts[index]["id"],
+        tag: rightsOver[index]["id"],
         child: Material(
           child: Center(
             child: Container(
@@ -69,23 +81,36 @@ class _HaveRightsState extends State<HaveRights> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Center(
-                        child: Container(
-                          width: 345,
-                          height: 320,
-                          decoration: BoxDecoration(
-                            // image: DecorationImage(
-                            //   image: NetworkImage('img.png'),
-                            //   fit: BoxFit.cover,
-                            // ),
-                            color: Colors.black,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.0),
-                            ),
-                          ),
-                        ),
+                        child: FutureBuilder<Map>(
+                          future: ni.getImageFromToken(rightsOver[index]["ERC721"], rightsOver[index]["id"]),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Image.memory(
+                                      snapshot.data!["png"],
+                                      width: 345,
+                                      height: 320,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                ),
+                              );
+                            }
+                          },
+                        )
                       ),
-                      Text(mock.nfts[index]["collectionname"], style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(mock.nfts[index]["id"], style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(rightsOver[index]["name"],
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(rightsOver[index]["id"],
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),

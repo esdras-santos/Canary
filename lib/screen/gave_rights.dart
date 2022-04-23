@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nftrenter/screen/gave_nft_popup.dart';
 import 'package:nftrenter/screen/utils/hero_dialog_route.dart';
+import 'package:nftrenter/screen/utils/metamask.dart';
+import 'package:nftrenter/screen/utils/nft_image.dart';
 
 import '../nft_mockups.dart';
 
@@ -13,6 +15,16 @@ class GaveRights extends StatefulWidget {
 
 class _GaveRightsState extends State<GaveRights> {
   Mockups mock = Mockups();
+  MetaMaskProvider mp = MetaMaskProvider();
+  List<Map> properties = [];
+  NFTImage ni = NFTImage();
+
+  @override
+  void initState() {
+    super.initState();
+    mock.propertiesOf(mp.currentAddress).then((value) => properties = value);
+  }
+  
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -21,7 +33,7 @@ class _GaveRightsState extends State<GaveRights> {
       mainAxisSpacing: 1.0,
       shrinkWrap: true,
       children: List.generate(
-        mock.nfts.length,
+        properties.length,
         (index) {
           return nftcard(index);
         },
@@ -33,11 +45,11 @@ class _GaveRightsState extends State<GaveRights> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-          return GaveNFTPopup(tag: mock.nfts[index]["id"], index: index);
+          return GaveNFTPopup(tag: properties[index]["id"], index: index, nft: properties[index],);
         }));
       },
       child: Hero(
-        tag: mock.nfts[index]["id"],
+        tag: properties[index]["id"],
         child: Material(
           child: Center(
             child: Container(
@@ -69,23 +81,34 @@ class _GaveRightsState extends State<GaveRights> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Center(
-                        child: Container(
-                          width: 345,
-                          height: 320,
-                          decoration: BoxDecoration(
-                            // image: DecorationImage(
-                            //   image: NetworkImage('img.png'),
-                            //   fit: BoxFit.cover,
-                            // ),
-                            color: Colors.black,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.0),
-                            ),
-                          ),
-                        ),
+                        child:FutureBuilder<Map>(
+                          future: ni.getImageFromToken(properties[index]["ERC721"], properties[index]["id"]),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Image.memory(
+                                      snapshot.data!["png"],
+                                      width: 345,
+                                      height: 320,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                ),
+                              );
+                            }
+                          },
+                        )
                       ),
-                      Text(mock.nfts[index]["collectionname"], style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(mock.nfts[index]["id"], style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(properties[index]["name"], style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(properties[index]["id"], style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),

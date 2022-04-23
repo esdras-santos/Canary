@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nftrenter/nft_mockups.dart';
 import 'package:nftrenter/screen/get_nft_popup.dart';
 import 'package:nftrenter/screen/utils/hero_dialog_route.dart';
+import 'package:nftrenter/screen/utils/nft_image.dart';
 
 class GetRights extends StatefulWidget {
   const GetRights({Key? key}) : super(key: key);
@@ -12,6 +13,14 @@ class GetRights extends StatefulWidget {
 
 class _GetRightsState extends State<GetRights> {
   Mockups mock = Mockups();
+  List<Map> availableNFTs = [];
+  NFTImage ni = NFTImage();
+
+  @override
+  void initState() {
+    super.initState();
+    mock.getAvailablNFTs().then((value) => availableNFTs = value);
+  }
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -20,7 +29,7 @@ class _GetRightsState extends State<GetRights> {
         mainAxisSpacing: 1.0,
         shrinkWrap: true,
         children: List.generate(
-          mock.nfts.length,
+          availableNFTs.length,
           (index) {
             return nftcard(index);
           },
@@ -31,11 +40,11 @@ class _GetRightsState extends State<GetRights> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-          return GetNFTPopup(tag: mock.nfts[index]["id"], index: index);
+          return GetNFTPopup(tag: availableNFTs[index]["id"], index: index, nft: availableNFTs[index]);
         }));
       },
       child: Hero(
-        tag: mock.nfts[index]["id"],
+        tag: availableNFTs[index]["id"],
         child: Material(
           child: Center(
             child: Container(
@@ -67,34 +76,45 @@ class _GetRightsState extends State<GetRights> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Center(
-                        child: Container(
-                          width: 345,
-                          height: 320,
-                          decoration: BoxDecoration(
-                            // image: DecorationImage(
-                            //   image: NetworkImage('img.png'),
-                            //   fit: BoxFit.cover,
-                            // ),
-                            color: Colors.black,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.0),
-                            ),
-                          ),
-                        ),
+                        child: FutureBuilder<Map>(
+                          future: ni.getImageFromToken(availableNFTs[index]["ERC721"], availableNFTs[index]["id"]),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Image.memory(
+                                      snapshot.data!["png"],
+                                      width: 345,
+                                      height: 320,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                ),
+                              );
+                            }
+                          },
+                        )
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Column(
                             children: [
-                              Text(mock.nfts[index]["collectionname"]),
-                              Text(mock.nfts[index]["id"]),
+                              Text(availableNFTs[index]["name"]),
+                              Text(availableNFTs[index]["id"]),
                             ],
                           ),
                           Column(
                             children: [
                               Text("Price"),
-                              Text(mock.nfts[index]["price"]),
+                              Text(availableNFTs[index]["dailyprice"]),
                             ],
                           ),
                         ],
