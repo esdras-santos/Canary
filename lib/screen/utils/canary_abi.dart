@@ -1,20 +1,25 @@
 class CanaryAbi {
   List<String> abi = [
-    "function getRights(address, uint256, uint256) external payable",
+    "function getRights(uint256, uint256) external payable",
     "function depositNFT(address, uint256 , uint256, uint256, uint256) external",
-    "function withdrawRoyalties(address, uint256 , address[], uint256[], uint256[]) external",
-    "function withdrawNFT(address, uint256) external",
-    "function setAvailability(address, uint256 , bool, uint256) external",
-    "function dailyPriceOf(address, uint256) external view returns (uint256)",
-    "function maxRightHoldersOf(address, uint256) external view returns (uint256)",
-    "function maxPeriodOf(address, uint256) external view returns (uint256)",
-    "function biggerDeadlineOf(address, uint256) external view returns (uint256)",
-    "function rightsPeriodOf(address, uint256 , address _holder) external view returns (uint256)",
-    "function rightsOf(address) external view returns (bytes32[] memory)",
-    "function getAvailableNFTs() external view returns (bytes32[] memory)",
-    "function rightHoldersOf(address, uint256) external view returns (address[] memory)",
-    "function holderDeadline(address, uint256, address) external view returns (uint256)",
-    "function ownerOf(address, uint256) external view returns (address)"
+    "function withdrawRoyalties(uint256 , address[], uint256[], uint256[]) external",
+    "function withdrawNFT(uint256, uint256) external",
+    "function setAvailability(uint256 , bool, uint256) external",
+    "function withdrawTreasury() external",
+    "function currentTreasury() external view returns (uint256)",
+    "function dailyPriceOf(uint256) external view returns (uint256)",
+    "function maxRightHoldersOf(uint256) external view returns (uint256)",
+    "function maxPeriodOf(uint256) external view returns (uint256)",
+    "function rightsPeriodOf(uint256 , address) external view returns (uint256)",
+    "function rightsOf(address) external view returns (uint256[] memory)",
+    "function getAvailableNFTs() external view returns (uint256[] memory)",
+    "function rightHoldersOf(uint256) external view returns (address[] memory)",
+    "function holderDeadline(uint256, address) external view returns (uint256)",
+    "function ownerOf(uint256) external view returns (address)",
+    "function propertiesOf(address) external view returns (bytes32[])",
+    "function availabilityOf(uint256) external view returns (bool)",
+    "function originOf(uint256) external view returns (bytes32[] memory)",
+    "function rightURI(uint256) external view returns (string memory)"
   ];
 
   List<String> e721abi = [
@@ -130,15 +135,14 @@ class CanaryAbi {
   List<String> ownershipNames = ["transferOwnership(address)", "owner()"];
 
   List<String> canaryNames = [
-    "getRights(address, uint256, uint256)",
-    "depositNFT(address, uint256, uint256, uint256, uint256)",
+    "getRights",
+    "depositNFT",
     "withdrawRoyalties",
     "withdrawNFT",
     "setAvailability",
     "dailyPriceOf",
     "maxRightHoldersOf",
     "maxPeriodOf",
-    "biggerDeadlineOf",
     "rightsPeriodOf",
     "rightsOf",
     "propertiesOf",

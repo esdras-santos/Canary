@@ -3,16 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_web3/flutter_web3.dart';
 import 'package:nftrenter/screen/utils/canary_abi.dart';
 import 'package:nftrenter/screen/utils/metamask.dart';
-import 'package:nftrenter/screen/utils/nft_image.dart';
+import 'package:nftrenter/screen/utils/nft_metadata.dart';
 
 import '../nft_mockups.dart';
+import 'utils/CKBUtils.dart';
 import 'utils/interfaces.dart';
 
 class GetNFTPopup extends StatefulWidget {
   String tag;
   int index;
   Map nft;
-  GetNFTPopup({Key? key, required this.tag, required this.index, required this.nft})
+  GetNFTPopup(
+      {Key? key, required this.tag, required this.index, required this.nft})
       : super(key: key);
 
   @override
@@ -22,15 +24,16 @@ class GetNFTPopup extends StatefulWidget {
 class _RentNFTPopupState extends State<GetNFTPopup> {
   Mockups mock = Mockups();
   int rentperiod = 0;
-  String rentamount = "0.0";
+  String rentamount = "0";
   CanaryAbi ca = CanaryAbi();
   MetaMaskProvider mm = MetaMaskProvider();
   Interfaces inter = Interfaces();
+  Map nftdata = {};
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    NFTImage ni = NFTImage();
+    NFTMetadata ni = NFTMetadata();
     return Center(
         child: Padding(
       padding: const EdgeInsets.all(10.0),
@@ -68,32 +71,37 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Center(
-                      child:FutureBuilder<Map>(
-                        future: ni.getImageFromToken(widget.nft["ERC721"], widget.nft["id"]),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Image.memory(
-                                    snapshot.data!["png"],
-                                    width: 500,
-                                    height: 550,
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.blue,
-                              ),
-                            );
-                          }
-                        },
-                      )
-                    ),
+                        child: FutureBuilder<Map>(
+                      future: ni.getMetadataFromUrl(widget.nft["uri"]),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          WidgetsBinding.instance
+                              ?.addPostFrameCallback((timeStamp) {
+                            setState(() {
+                              nftdata = snapshot.data!;
+                            });
+                          });
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Image.memory(
+                                  snapshot.data!["png"],
+                                  width: 500,
+                                  height: 550,
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.blue,
+                            ),
+                          );
+                        }
+                      },
+                    )),
                   ),
                   Expanded(
                     child: Container(
@@ -129,7 +137,7 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                             SizedBox(height: 20),
                             Text(widget.nft["name"]),
                             Text(
-                              widget.nft["id"],
+                              nftdata["name"],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
@@ -175,22 +183,13 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                                     print(value);
                                     rentperiod = int.parse(value);
                                     print(rentperiod);
-                                    var aux =
-                                        "${rentperiod * double.parse(widget.nft["dailyprice"])}";
-                                    if (aux.split(".")[1].length > 18) {
-                                      rentamount = (rentperiod *
-                                              double.parse(widget.nft["dailyprice"]))
-                                          .toStringAsFixed(18);
-                                    } else {
-                                      rentamount =
-                                          "${rentperiod * double.parse(widget.nft["dailyprice"])}";
-                                    }
+                                    rentamount =
+                                        "${rentperiod * int.parse(widget.nft["dailyprice"])}";
                                   });
                                 },
                               ),
                             ),
-                            Text(
-                                "Max of ${widget.nft["maxperiod"]} days"),
+                            Text("Max of ${widget.nft["maxperiod"]} days"),
                             SizedBox(
                               height: 30,
                             ),
@@ -201,8 +200,9 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                                 ),
                                 Text("Daily Price:     ",
                                     style: TextStyle(fontSize: 20)),
-                                Text(widget.nft["dailyprice"] + " KAI",
-                                    style: TextStyle(fontSize: 20)),
+                                Text(toCKBFormat(
+                                        "${widget.nft["dailyprice"]}") +
+                                    " CKB"),
                               ],
                             ),
                             SizedBox(height: 10),
@@ -213,8 +213,7 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                                 ),
                                 Text("Right total price: ",
                                     style: TextStyle(fontSize: 20)),
-                                Text(rentamount + " KAI",
-                                    style: TextStyle(fontSize: 20)),
+                                Text(toCKBFormat(rentamount) + " KAI"),
                               ],
                             ),
                             SizedBox(height: 40),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:nftrenter/screen/show_nft_popup.dart';
+import 'package:nftrenter/nft_mockups.dart';
+import 'package:nftrenter/screen/get_nft_popup.dart';
 import 'package:nftrenter/screen/utils/hero_dialog_route.dart';
 import 'package:nftrenter/screen/utils/metamask.dart';
-import 'package:nftrenter/screen/utils/nft_image.dart';
+import 'package:nftrenter/screen/utils/nft_metadata.dart';
+import 'package:flutter_web3/flutter_web3.dart';
 
-import '../nft_mockups.dart';
+import 'show_nft_popup.dart';
+import 'utils/CKBUtils.dart';
 
 class HaveRights extends StatefulWidget {
   const HaveRights({Key? key}) : super(key: key);
@@ -16,40 +19,47 @@ class HaveRights extends StatefulWidget {
 class _HaveRightsState extends State<HaveRights> {
   Mockups mock = Mockups();
   MetaMaskProvider mp = MetaMaskProvider();
-  List<Map> rightsOver = [];
-  NFTImage ni = NFTImage();
-
-  @override
-  void initState() {
-    super.initState();
-    mock.getRightsOf(mp.currentAddress).then((value) => rightsOver = value);
-  }
+  NFTMetadata ni = NFTMetadata();
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 3,
-      crossAxisSpacing: 1.0,
-      mainAxisSpacing: 1.0,
-      shrinkWrap: true,
-      children: List.generate(
-        rightsOver.length,
-        (index) {
-          return nftcard(index);
-        },
-      ),
-    );
+    return FutureBuilder<List<Map>>(
+        future: mock.getRightsOf(mp.currentAddress),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return GridView.count(
+                crossAxisCount: 3,
+                crossAxisSpacing: 1.0,
+                mainAxisSpacing: 1.0,
+                shrinkWrap: true,
+                children: List.generate(
+                  snapshot.data!.length,
+                  (index) {
+                    return nftcard(index, snapshot.data!);
+                  },
+                ));
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.blue,
+              ),
+            );
+          }
+        });
   }
 
-  Widget nftcard(int index) {
+  Widget nftcard(int index, List<Map> availableNFTs) {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-          return ShowNFTPopup(tag: rightsOver[index]["id"], index: index, nft: rightsOver[index],);
+          return ShowNFTPopup(
+              tag: availableNFTs[index]["id"],
+              index: index,
+              nft: availableNFTs[index]);
         }));
       },
       child: Hero(
-        tag: rightsOver[index]["id"],
+        tag: availableNFTs[index]["id"],
         child: Material(
           child: Center(
             child: Container(
@@ -81,36 +91,56 @@ class _HaveRightsState extends State<HaveRights> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Center(
-                        child: FutureBuilder<Map>(
-                          future: ni.getImageFromToken(rightsOver[index]["ERC721"], rightsOver[index]["id"]),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Image.memory(
-                                      snapshot.data!["png"],
-                                      width: 345,
-                                      height: 320,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.blue,
-                                ),
-                              );
-                            }
-                          },
-                        )
-                      ),
-                      Text(rightsOver[index]["name"],
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(rightsOver[index]["id"],
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: FutureBuilder<Map>(
+                        future: ni.getMetadataFromUrl(
+                            availableNFTs[index]["uri"]),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.memory(
+                                        snapshot.data!["png"],
+                                        width: 300,
+                                        height: 280,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(availableNFTs[index]["name"]),
+                                          Text(snapshot.data!["name"]),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          Text("Price"),
+                                          Text(toCKBFormat(
+                                                  "${availableNFTs[index]["dailyprice"]}") +
+                                              " CKB"),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                              ),
+                            );
+                          }
+                        },
+                      )),
                     ],
                   ),
                 ),

@@ -6,23 +6,24 @@ import 'dart:convert' as convert;
 
 import 'package:nftrenter/screen/utils/interfaces.dart';
 
-class NFTImage {
+class NFTMetadata {
   Interfaces inter = Interfaces();
   http.Client httpClient = http.Client();
-  Future<Map> getImageFromToken(String erc721, String token) async {
+  Future<Map> getMetadataFromToken(String erc721, String token) async {
     var result = await inter.erc721(erc721).call<String>('tokenURI', [token]);
-    Uint8List png = await getImageFromUrl(result);
-    return {"png": png};
+    var metadata = await getMetadataFromUrl(result);
+    return metadata;
   }
 
-  Future<Uint8List> getImageFromUrl(String ipfsurl) async {
+  Future<Map> getMetadataFromUrl(String ipfsurl) async {
     var url = ipfsurl.replaceFirst(r'ipfs://', r'https://ipfs.io/ipfs/');
     var resp = await httpClient.get(Uri.parse(url));
     var json = convert.jsonDecode(resp.body) as Map;
     var imageUrl = json["image"]
         .toString()
-        .replaceFirst(r'ipfs://', r'https://ipfs.io/ipfs/');
+        .replaceFirst(r'ipfs://', r'https://ipfs.io/ipfs/')
+        .replaceFirst('.json', '.png');
     var imgresp = await httpClient.get(Uri.parse(imageUrl));
-    return Uint8List.fromList(imgresp.body.codeUnits);
+    return {"png": Uint8List.fromList(imgresp.body.codeUnits), "name": json["name"], "description": json["desription"]};
   }
 }

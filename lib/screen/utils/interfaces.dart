@@ -10,6 +10,11 @@ class Interfaces {
         Interface(ca.abi), provider!.getSigner());
   }
 
+  Contract canaryro() {
+    return Contract("0xDB75ECA09b0911e530741F52fdA0Ae862892aFE5",
+        Interface(ca.abi), provider!);
+  }
+
   Contract erc721(String collection) {
     return Contract(collection, Interface(ca.e721abi), provider!.getSigner());
   }

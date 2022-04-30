@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nftrenter/screen/TestForm.dart';
 import 'package:nftrenter/screen/gave_rights.dart';
 import 'package:nftrenter/screen/get_rights.dart';
 import 'package:nftrenter/screen/give_rights.dart';
@@ -16,8 +15,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Widget form = TestForm(); //GetRights();
+  Widget form = GetRights();
   String formstate = "getrights";
+  bool loadwallet = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +44,13 @@ class _HomeState extends State<Home> {
                               context.read<MetaMaskProvider>().connect();
                             }
                             if (provider.currentAddress.isNotEmpty) {
+                              WidgetsBinding.instance
+                                  ?.addPostFrameCallback((timeStamp) {
+                                setState(() {
+                                  loadwallet = true;
+                                });
+                              });
+
                               return Container(
                                 width: 200,
                                 height: 55,
@@ -231,7 +238,7 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     height: 20,
                   ),
-                  form
+                  loadwallet ? form : Container()
                 ],
               ),
             ),

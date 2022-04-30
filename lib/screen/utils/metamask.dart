@@ -7,6 +7,11 @@ import 'package:nftrenter/screen/utils/interfaces.dart';
 
 
 class MetaMaskProvider extends ChangeNotifier {
+  MetaMaskProvider._privateConstructor();
+  static final MetaMaskProvider _mmp = MetaMaskProvider._privateConstructor();
+  factory MetaMaskProvider() {
+    return _mmp;
+  }
   static const operatingChain = 242;
   String currentAddress = '';
   int currentChain = -1;
@@ -23,13 +28,13 @@ class MetaMaskProvider extends ChangeNotifier {
       currentChain = await ethereum!.getChainId();
       // var cut = [
       //   {
-      //     "facetAddress": "0x8b7CF4e9709d9c7A60b92f2fB46C0E5a9c40cd31",
+      //     "facetAddress": "0x4FEB6DA9F4cb1Ff93A24E4FA75b7129653169970",
       //     "action": 0,
       //     "functionSelectors":
       //         getSelectors(a.diamondLoupAbi, a.diamondLoupeNames)
       //   },
       //   {
-      //     "facetAddress": "0x734d95D74Cb7366E17d851fE09Ad0113E67ef7d0",
+      //     "facetAddress": "0x667064c47430d45cAE9dAd03878101bA3d47f83c",
       //     "action": 0,
       //     "functionSelectors": getSelectors(a.ownershipAbi, a.ownershipNames)
       //   }
@@ -43,7 +48,6 @@ class MetaMaskProvider extends ChangeNotifier {
       //         getSelectors(a.canaryabi, a.canaryNames)
       //   }
       // ];
-      
       notifyListeners();
     }
   }

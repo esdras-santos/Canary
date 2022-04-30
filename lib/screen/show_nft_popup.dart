@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nftrenter/screen/utils/nft_image.dart';
+import 'package:nftrenter/screen/utils/nft_metadata.dart';
 
 import '../nft_mockups.dart';
 
@@ -8,7 +8,8 @@ class ShowNFTPopup extends StatefulWidget {
   String tag;
   int index;
   Map nft;
-  ShowNFTPopup({Key? key, required this.tag, required this.index, required this.nft})
+  ShowNFTPopup(
+      {Key? key, required this.tag, required this.index, required this.nft})
       : super(key: key);
 
   @override
@@ -19,7 +20,8 @@ class _ShowNFTPopupState extends State<ShowNFTPopup> {
   Mockups mock = Mockups();
   int rentperiod = 0;
   String rentamount = "0.0";
-  NFTImage ni = NFTImage();
+  NFTMetadata ni = NFTMetadata();
+  Map nftdata = {};
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +63,16 @@ class _ShowNFTPopupState extends State<ShowNFTPopup> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Center(
-                      child:FutureBuilder<Map>(
-                        future: ni.getImageFromToken(widget.nft["ERC721"], widget.nft["id"]),
+                      child: FutureBuilder<Map>(
+                        future: ni.getMetadataFromUrl(widget.nft["uri"]),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            WidgetsBinding.instance
+                                ?.addPostFrameCallback((timeStamp) {
+                              setState(() {
+                                nftdata = snapshot.data!;
+                              });
+                            });
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
@@ -106,11 +114,9 @@ class _ShowNFTPopupState extends State<ShowNFTPopup> {
                                   width: 30,
                                 ),
                                 Text("Owner: "),
-                                Text(widget.nft["owner"]
-                                        .substring(0, 6) +
+                                Text(widget.nft["owner"].substring(0, 6) +
                                     "..." +
-                                    widget.nft["owner"]
-                                        .substring(37, 42)),
+                                    widget.nft["owner"].substring(37, 42)),
                               ],
                             ),
                             SizedBox(height: 10),
@@ -120,17 +126,15 @@ class _ShowNFTPopupState extends State<ShowNFTPopup> {
                                   width: 30,
                                 ),
                                 Text("ERC721: "),
-                                Text(widget.nft["ERC721"]
-                                        .substring(0, 6) +
+                                Text(widget.nft["ERC721"].substring(0, 6) +
                                     "..." +
-                                    widget.nft["ERC721"]
-                                        .substring(37, 42)),
+                                    widget.nft["ERC721"].substring(37, 42)),
                               ],
                             ),
                             SizedBox(height: 20),
                             Text(widget.nft["name"]),
                             Text(
-                              widget.nft["id"],
+                              nftdata["name"],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),

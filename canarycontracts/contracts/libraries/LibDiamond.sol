@@ -25,28 +25,31 @@ library LibDiamond {
 
     struct DiamondStorage {
         uint256 treasury;
-        bytes32[] availableNFTs;
-        // receive erc721 address, nftid and return daily price for rights
-        mapping (address => mapping (uint256=>uint256)) dailyPrice;
+
+        uint256[] availableRights;
+        // return erc721 address and token id of given rightid
+        mapping (uint256=>bytes32[]) rightsOrigin;
+        mapping (uint256=>string) rightUri;
+        // rightid and return daily price for rights
+        mapping (uint256=>uint256) dailyPrice;
         // receive erc721 address, nftid and return the max number of renters that the nft could have
-        mapping (address => mapping (uint256=>uint256)) maxRightsHolders;
+        mapping (uint256=>uint256) maxRightsHolders;
         // receive erc721 address, nftid and return maximum rental time in days
-        mapping (address => mapping (uint256=>uint256)) maxtime;
-        mapping (address=>bytes32[]) rightsOver;
+        mapping (uint256=>uint256) maxtime;
+        mapping (address=>uint256[]) rightsOver;
         // receive address and return list of nfts that the address have rights over "[erc721address, nftid]"
-        mapping (address=>bytes32[]) properties;
-        // receive erc721 address and nftid and return biggerDeadline
-        mapping (address=>mapping (uint256=>uint256)) biggerDeadline;
+        mapping (address=>uint256[]) properties;
+        
         // receive erc721 address and nftid and return if is available
-        mapping (address=>mapping (uint256=>bool)) isAvailable;
+        mapping (uint256=>bool) isAvailable;
         // receive erc721 address and nftid and return owner
-        mapping (address=>mapping (uint256=>address)) owner;
+        mapping (uint256=>address) owner;
         // receive erc721 address and nftid and return list of addresse that have rights over it
-        mapping (address=>mapping (uint256=>address[])) rightHolders;
+        mapping (uint256=>address[]) rightHolders;
         // receive erc721 address, nftid, and rights buyer address and return deadline over that nft
-        mapping (address=>mapping (uint256=>mapping (address=>uint256))) deadline;
+        mapping (uint256=>mapping (address=>uint256)) deadline;
         // receive erc721 address, nftid, and rights buyer address and return rights period in days
-        mapping (address=>mapping (uint256=>mapping (address=>uint256))) rightsPeriod;
+        mapping (uint256=>mapping (address=>uint256)) rightsPeriod;
 
         // maps function selector to the facet address and
         // the position of the selector in the facetFunctionSelectors.selectors array
