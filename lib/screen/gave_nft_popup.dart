@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_web3/ethers.dart';
 import 'package:nftrenter/screen/utils/nft_metadata.dart';
 
 import '../nft_mockups.dart';
@@ -177,7 +178,7 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                             snapshot.data!["dl"],
                                             snapshot.data!["roi"],
                                             snapshot.data!["whri"]
-                                          ]);
+                                          ], TransactionOverride(gasPrice: BigInt.from(6000000)));
                                           print(tx.hash);
                                         },
                                         shape: RoundedRectangleBorder(
@@ -224,7 +225,7 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                               "withdrawNFT", [
                                             widget.nft["ERC721"],
                                             widget.nft["id"]
-                                          ]);
+                                          ], TransactionOverride(gasPrice: BigInt.from(6000000)));
                                           tx.wait();
                                           print(tx.hash);
                                         },

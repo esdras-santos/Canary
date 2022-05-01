@@ -5,14 +5,13 @@ import 'package:flutter_web3/flutter_web3.dart';
 import 'package:nftrenter/screen/utils/canary_abi.dart';
 import 'package:nftrenter/screen/utils/interfaces.dart';
 
-
 class MetaMaskProvider extends ChangeNotifier {
   MetaMaskProvider._privateConstructor();
   static final MetaMaskProvider _mmp = MetaMaskProvider._privateConstructor();
   factory MetaMaskProvider() {
     return _mmp;
   }
-  static const operatingChain = 242;
+  static const operatingChain = 868455272153094;
   String currentAddress = '';
   int currentChain = -1;
   bool get isEnabled => ethereum != null;
@@ -42,12 +41,13 @@ class MetaMaskProvider extends ChangeNotifier {
 
       // var cut = [
       //   {
-      //     "facetAddress": "0x3e9966fA0da25bc97D9A0aA318Eff7dd761a49C9",
+      //     "facetAddress": "0x211cA1afC30D39Feff3d49EEd5BCC3a95b1CC8d8",
       //     "action": 0,
       //     "functionSelectors":
       //         getSelectors(a.canaryabi, a.canaryNames)
       //   }
       // ];
+      // print(cut);
       notifyListeners();
     }
   }

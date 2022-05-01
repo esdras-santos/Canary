@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web3/ethers.dart';
 
+import 'utils/CKBUtils.dart';
 import 'utils/interfaces.dart';
 
 class GiveRights extends StatefulWidget {
@@ -94,25 +96,35 @@ class _GiveRightsState extends State<GiveRights> {
           width: 300,
           child: RaisedButton(
             onPressed: () async {
-              inter.erc721(E721).send("approve", [
-                "0xDB75ECA09b0911e530741F52fdA0Ae862892aFE5",
-                nftid
-              ]).then((value) {
+              print(nftid);
+              inter
+                  .erc721(E721)
+                  .send(
+                      "approve",
+                      [
+                        "0x34786005489a9BE178Aeb46895Adc800062D143C",
+                        nftid,
+                      ],
+                      TransactionOverride(
+                          gasPrice: BigInt.from(6000000)))
+                  .then((value) {
                 value.wait();
-                inter.canary().send(
-                  "depositNFT",
-                  [
-                    E721,
-                    nftid,
-                    dailyprice,
-                    mp,
-                    mh,
-                  ],
-                ).then((value) {
+                inter
+                    .canary()
+                    .send(
+                        "depositNFT",
+                        [
+                          E721,
+                          nftid,
+                          dailyprice,
+                          mp,
+                          mh,
+                        ],
+                        TransactionOverride(gasPrice: BigInt.from(6000000)))
+                    .then((value) {
                   value.wait();
                   print(value.hash);
                 });
-                
               });
             },
             shape: RoundedRectangleBorder(
@@ -175,7 +187,7 @@ class _GiveRightsState extends State<GiveRights> {
             } else if (field == "id") {
               nftid = value;
             } else if (field == "dp") {
-              dailyprice = toKAI(value);
+              dailyprice = toCKB(value);
             } else if (field == "mp") {
               mp = value;
             } else if (field == "mh") {

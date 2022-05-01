@@ -230,6 +230,7 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                                         rentperiod
                                       ],
                                       TransactionOverride(
+                                        gasPrice: BigInt.from(6000000),
                                           value: BigInt.from(
                                               num.parse(rentamount))));
                                   final receipt = tx.wait();

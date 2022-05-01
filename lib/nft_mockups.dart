@@ -6,8 +6,8 @@ class Mockups {
   MetaMaskProvider mp = MetaMaskProvider();
   Interfaces inter = Interfaces();
 
-  Future<List<Map>> getAvailableNFTs() async {
-    final anfts = await inter.canaryro().call("getAvailableNFTs");
+  Future<List<Map>> getAvailableNFTs() async {    
+    final anfts = await inter.canary().call("getAvailableNFTs");
 
     List<Map> availableNFTs = [];
 
@@ -105,8 +105,7 @@ class Mockups {
       var deadline = await inter
           .canaryro()
           .call("holderDeadline", [rightid, rightHolders[i]]);
-      final dailyPrice =
-          await inter.canaryro().call("dailyPriceOf", [rightid]);
+      final dailyPrice = await inter.canaryro().call("dailyPriceOf", [rightid]);
       final rightsPeriod = await inter
           .canaryro()
           .call("rightsPeriodOf", [rightid, rightHolders[i]]);
@@ -126,6 +125,12 @@ class Mockups {
         unconfirmedRoyalties += int.parse(dailyPrice) * int.parse(rightsPeriod);
       }
     }
-    return {"dl": deadlinelist, "roi": roindexes, "whri": whrindexes, "cr": confirmedRoyalties, "ur": unconfirmedRoyalties};
+    return {
+      "dl": deadlinelist,
+      "roi": roindexes,
+      "whri": whrindexes,
+      "cr": confirmedRoyalties,
+      "ur": unconfirmedRoyalties
+    };
   }
 }

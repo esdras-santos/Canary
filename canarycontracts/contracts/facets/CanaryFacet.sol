@@ -151,6 +151,7 @@ contract CanaryFacet {
         ds.rightsOrigin[rightid].push(bytes32(_nftid));
         ds.rightUri[rightid] = _nftUri;
         ds.isAvailable[rightid] = true;
+        ds.properties[msg.sender].push(rightid);
         ds.availableRights.push(rightid);
     }
 
