@@ -42,10 +42,14 @@ flutter run --release
 Diamond Address: [0x34786005489a9BE178Aeb46895Adc800062D143C](https://v1.aggron.gwscan.com/account/0x34786005489a9be178aeb46895adc800062d143c?search=0x34786005489a9be178aeb46895adc800062d143c) 
 
 ### Facet addresses
-DiamondCut address:[0x8d5DE0b0Cf2D84b72f42861276E0d8dbc10596C5](https://v1.aggron.gwscan.com/account/0x8d5de0b0cf2d84b72f42861276e0d8dbc10596c5?search=0x8d5de0b0cf2d84b72f42861276e0d8dbc10596c5)  
+DiamondCut address:[0x8d5DE0b0Cf2D84b72f42861276E0d8dbc10596C5](https://v1.aggron.gwscan.com/account/0x8d5de0b0cf2d84b72f42861276e0d8dbc10596c5?search=0x8d5de0b0cf2d84b72f42861276e0d8dbc10596c5)
+
 DiamondInit address: [0xCEaA4bDbBC1163C3dE40916976Db128e8b9a6Db1](https://v1.aggron.gwscan.com/account/0xceaa4bdbbc1163c3de40916976db128e8b9a6db1?search=0xceaa4bdbbc1163c3de40916976db128e8b9a6db1)
+
 Diamond Loupe address: [0x92B87927e5F0E296C84ff6D1Af56A176746E5614](https://v1.aggron.gwscan.com/account/0x92b87927e5f0e296c84ff6d1af56a176746e5614?search=0x92b87927e5f0e296c84ff6d1af56a176746e5614)
+
 Diamond ownership address: [0x7B494333b43Fa2328b1867bBB0C61Eb7581FDd89](https://v1.aggron.gwscan.com/account/0x7b494333b43fa2328b1867bbb0c61eb7581fdd89?search=0x7b494333b43fa2328b1867bbb0c61eb7581fdd89)
+
 Canary address: [0xC38eE280928095597E57758Db1EE02e3b1f0a1Aa](https://v1.aggron.gwscan.com/account/0xc38ee280928095597e57758db1ee02e3b1f0a1aa?search=0xc38ee280928095597e57758db1ee02e3b1f0a1aa)
 
 ### Test collection address
