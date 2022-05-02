@@ -28,7 +28,7 @@ You can run the project just by clicking in the public link [HERE](https://esdra
 2. Clone this repositore
 
 ```shell
-git clone https://github.com/esdras-santos/godex
+git clone https://github.com/esdras-santos/Canary
 ```
 
 3. Inside the repositore type run: 
