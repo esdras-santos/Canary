@@ -6,6 +6,7 @@ class Interfaces {
   CanaryAbi ca = CanaryAbi();
 
   Contract canary() {
+    
     return Contract("0x34786005489a9BE178Aeb46895Adc800062D143C",
         Interface(ca.abi), provider!.getSigner());
   }

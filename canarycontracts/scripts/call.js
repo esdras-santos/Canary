@@ -26,7 +26,7 @@ const account = web3.eth.accounts.wallet.add(ACCOUNT_PRIVATE_KEY);
 
 async function readCall() {
     const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-
+    contract.interface.
     const callResult = await contract.methods.propertiesOf(account.address).call({
         from: account.address
     });

@@ -5,7 +5,6 @@ class CanaryAbi {
     "function withdrawRoyalties(uint256 , address[], uint256[], uint256[]) external",
     "function withdrawNFT(uint256, uint256) external",
     "function setAvailability(uint256 , bool, uint256) external",
-    "function withdrawTreasury() external",
     "function currentTreasury() external view returns (uint256)",
     "function dailyPriceOf(uint256) external view returns (uint256)",
     "function maxRightHoldersOf(uint256) external view returns (uint256)",

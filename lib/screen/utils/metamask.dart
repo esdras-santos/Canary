@@ -27,13 +27,13 @@ class MetaMaskProvider extends ChangeNotifier {
       currentChain = await ethereum!.getChainId();
       // var cut = [
       //   {
-      //     "facetAddress": "0x4FEB6DA9F4cb1Ff93A24E4FA75b7129653169970",
+      //     "facetAddress": "0x9c520e4561993294744227af6C46a08056667784",
       //     "action": 0,
       //     "functionSelectors":
       //         getSelectors(a.diamondLoupAbi, a.diamondLoupeNames)
       //   },
       //   {
-      //     "facetAddress": "0x667064c47430d45cAE9dAd03878101bA3d47f83c",
+      //     "facetAddress": "0x5D9efE77aCb9D0DfCfC8aAE134696A5587cc1273",
       //     "action": 0,
       //     "functionSelectors": getSelectors(a.ownershipAbi, a.ownershipNames)
       //   }
@@ -41,13 +41,14 @@ class MetaMaskProvider extends ChangeNotifier {
 
       // var cut = [
       //   {
-      //     "facetAddress": "0x211cA1afC30D39Feff3d49EEd5BCC3a95b1CC8d8",
+      //     "facetAddress": "0xAD25D794E88c358C4bE5899d98EB06b1f7080141",
       //     "action": 0,
       //     "functionSelectors":
       //         getSelectors(a.canaryabi, a.canaryNames)
       //   }
       // ];
       // print(cut);
+      print(EthUtils.defaultAbiCoder.encode(["address","uint256"], ["0x550Ee22945AaCBEBa678550b53A8B1AF7e923EBe", "10"]));
       notifyListeners();
     }
   }

@@ -25,8 +25,14 @@ library LibDiamond {
 
     struct DiamondStorage {
         uint256 treasury;
-
+        uint256 budget;
+        uint256 period;
+        address governanceToken;
+        address governor;
         uint256[] availableRights;
+        mapping (address=>uint256) dividends;
+        // tracks price before approval of the proposal
+        mapping (uint256=>uint256) beforeProposal;
         // return erc721 address and token id of given rightid
         mapping (uint256=>bytes32[]) rightsOrigin;
         mapping (uint256=>string) rightUri;

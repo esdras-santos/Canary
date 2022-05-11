@@ -12,6 +12,7 @@ class Mockups {
     List<Map> availableNFTs = [];
 
     for (int i = 0; i < anfts.length; i = i + 2) {
+      
       final dp = await inter.canary().call<BigInt>("dailyPriceOf", [anfts[i]]);
       final owner = await inter.canary().call<String>("ownerOf", [anfts[i]]);
       final mp = await inter.canary().call<BigInt>("maxPeriodOf", [anfts[i]]);
