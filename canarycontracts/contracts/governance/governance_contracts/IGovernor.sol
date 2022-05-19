@@ -3,14 +3,13 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 /**
  * @dev Interface of the {Governor} core.
  *
  * _Available since v4.3._
  */
-abstract contract IGovernor is IERC165 {
+abstract contract IGovernor{
     enum ProposalState {
         Pending,
         Active,
@@ -153,15 +152,6 @@ abstract contract IGovernor is IERC165 {
      * duration compared to the voting delay.
      */
     function votingPeriod() public view virtual returns (uint256);
-
-    /**
-     * @notice module:user-config
-     * @dev Minimum number of cast voted required for a proposal to be successful.
-     *
-     * Note: The `blockNumber` parameter corresponds to the snapshot used for counting vote. This allows to scale the
-     * quorum depending on values such as the totalSupply of a token at this block (see {ERC20Votes}).
-     */
-    function quorum(uint256 blockNumber) public view virtual returns (uint256);
 
     /**
      * @notice module:reputation

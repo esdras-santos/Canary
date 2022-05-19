@@ -68,15 +68,6 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
-     * @dev See {Governor-_quorumReached}.
-     */
-    function _quorumReached(uint256 proposalId) internal view virtual override returns (bool) {
-        ProposalVote storage proposalvote = _proposalVotes[proposalId];
-
-        return quorum(proposalSnapshot(proposalId)) <= proposalvote.forVotes + proposalvote.abstainVotes;
-    }
-
-    /**
      * @dev See {Governor-_voteSucceeded}. In this module, the forVotes must be strictly over the againstVotes.
      */
     function _voteSucceeded(uint256 proposalId) internal view virtual override returns (bool) {
@@ -117,6 +108,7 @@ abstract contract GovernorCountingSimple is Governor {
             revert("GovernorVotingSimple: invalid value for enum VoteType");
         }
     }
+
 
     function getForVoters(uint256 proposalId) external view returns(address[] memory){
         ProposalVote storage proposalvote = _proposalVotes[proposalId];

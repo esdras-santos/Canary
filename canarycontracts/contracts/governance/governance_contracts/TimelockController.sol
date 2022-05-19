@@ -4,8 +4,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 /**
@@ -23,7 +21,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
  *
  * _Available since v3.3._
  */
-contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver {
+contract TimelockController is AccessControl{
     bytes32 public constant TIMELOCK_ADMIN_ROLE = keccak256("TIMELOCK_ADMIN_ROLE");
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
     bytes32 public constant EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
@@ -74,7 +72,6 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
      * operations to perform future maintenance.
      */
     constructor(
-        uint256 minDelay,
         address[] memory proposers,
         address[] memory executors
     ) {
@@ -98,8 +95,8 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
             _setupRole(EXECUTOR_ROLE, executors[i]);
         }
 
-        _minDelay = minDelay;
-        emit MinDelayChange(0, minDelay);
+        _minDelay = 14 days;
+        emit MinDelayChange(0, 14 days);
     }
 
     /**
@@ -120,12 +117,7 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
      */
     receive() external payable {}
 
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, AccessControl) returns (bool) {
-        return interfaceId == type(IERC1155Receiver).interfaceId || super.supportsInterface(interfaceId);
-    }
+    
 
     /**
      * @dev Returns whether an id correspond to a registered operation. This
@@ -148,6 +140,12 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
     function isOperationReady(bytes32 id) public view virtual returns (bool ready) {
         uint256 timestamp = getTimestamp(id);
         return timestamp > _DONE_TIMESTAMP && timestamp <= block.timestamp;
+    }
+
+    //  operation must wait for 7 days after approval
+    function isOperationExecutable(bytes32 id) public view returns (bool executable) {
+        uint256 timestamp = getTimestamp(id);
+        return timestamp + 7 days <= block.timestamp;
     }
 
     /**
@@ -349,6 +347,7 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
      * @dev Checks before execution of an operation's calls.
      */
     function _beforeCall(bytes32 id, bytes32 predecessor) private view {
+        // require(isOperationExecutable(id));
         require(isOperationReady(id), "TimelockController: operation is not ready");
         require(predecessor == bytes32(0) || isOperationDone(predecessor), "TimelockController: missing dependency");
     }
@@ -377,41 +376,5 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
         _minDelay = newDelay;
     }
 
-    /**
-     * @dev See {IERC721Receiver-onERC721Received}.
-     */
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes memory
-    ) public virtual override returns (bytes4) {
-        return this.onERC721Received.selector;
-    }
-
-    /**
-     * @dev See {IERC1155Receiver-onERC1155Received}.
-     */
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes memory
-    ) public virtual override returns (bytes4) {
-        return this.onERC1155Received.selector;
-    }
-
-    /**
-     * @dev See {IERC1155Receiver-onERC1155BatchReceived}.
-     */
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] memory,
-        uint256[] memory,
-        bytes memory
-    ) public virtual override returns (bytes4) {
-        return this.onERC1155BatchReceived.selector;
-    }
+    
 }

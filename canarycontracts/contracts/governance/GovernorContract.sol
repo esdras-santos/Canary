@@ -5,21 +5,21 @@ import "./governance_contracts/Governor.sol";
 import "./governance_contracts/extensions/GovernorSettings.sol";
 import "./governance_contracts/extensions/GovernorCountingSimple.sol";
 import "./governance_contracts/extensions/GovernorVotes.sol";
-import "./governance_contracts/extensions/GovernorVotesQuorumFraction.sol";
 import "./governance_contracts/extensions/GovernorTimelockControl.sol";
 
+
 /// @custom:security-contact esantoz@protonmail.com
-contract GovernorContract is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction, GovernorTimelockControl {
+contract GovernorContract is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorTimelockControl {
+    
+
     constructor(IVotes _token, TimelockController _timelock)
         Governor("GovernorContract")
-        GovernorSettings(1 /* 1 block */, 45818 /* 1 week */, 1e18)
+        GovernorSettings(1 /* 1 block */, 7 days , 1e18)
         GovernorVotes(_token)
-        GovernorVotesQuorumFraction(51)
         GovernorTimelockControl(_timelock)
     {}
 
-    // The following functions are overrides required by Solidity.
-
+    
     function votingDelay()
         public
         view
@@ -27,6 +27,17 @@ contract GovernorContract is Governor, GovernorSettings, GovernorCountingSimple,
         returns (uint256)
     {
         return super.votingDelay();
+    }
+
+    function execute(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        bytes32 descriptionHash
+    ) public payable override(Governor, IGovernor) returns (uint256 proposalId){
+        uint256 proposalid = super.hashProposal(targets, values, calldatas, descriptionHash);
+        require(_voteSucceeded(proposalid));
+        super.execute(targets,values,calldatas,descriptionHash);
     }
 
     
@@ -39,14 +50,6 @@ contract GovernorContract is Governor, GovernorSettings, GovernorCountingSimple,
         return super.votingPeriod();
     }
 
-    function quorum(uint256 blockNumber)
-        public
-        view
-        override(IGovernor, GovernorVotesQuorumFraction)
-        returns (uint256)
-    {
-        return super.quorum(blockNumber);
-    }
 
     function state(uint256 proposalId)
         public
@@ -98,12 +101,5 @@ contract GovernorContract is Governor, GovernorSettings, GovernorCountingSimple,
         return super._executor();
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
+    
 }

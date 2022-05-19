@@ -126,11 +126,6 @@ contract CanaryFacet {
         ds.isAvailable[_rightid] = _available;
     }
 
-    function withdrawTreasury() external{
-        LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-        require(msg.sender == ds.contractOwner, "you are not the owner!");
-        payable(msg.sender).transfer(ds.treasury);
-    }
 
     function _mint(
         address _erc721, 

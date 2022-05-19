@@ -23,7 +23,7 @@ contract Treasury{
         ds.period = block.timestamp + 60 days;
     }
 
-    function transfer(address _to, uint256 _amount) {
+    function transfer(address _to, uint256 _amount) external {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         require(msg.sender == ds.contractOwner);
         require(_amount <= ds.budget);
@@ -31,13 +31,14 @@ contract Treasury{
         payable(_to).transfer(_amount);
     }
 
-    function afterProposal(uint256 _proposalid, uint256 _currentPrice) external {
+    function beforeProposal(uint256 _proposalid, uint256 _currentPrice) external {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         require(ds.governor == msg.sender);
         ds.beforeProposal[_proposalid] = _currentPrice;
     }
 
-    // receive the proposalid and the price of CAT/Matic(how many Matics is used to by a CAT)
+
+    // receive the proposalid and the price of CAT/Matic(how many Matics is used to buy a CAT)
     function payout(uint256 _proposalid, uint256 _currentPrice) external {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         require(ds.governor == msg.sender);

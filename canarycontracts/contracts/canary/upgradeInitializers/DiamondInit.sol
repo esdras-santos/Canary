@@ -29,7 +29,8 @@ contract DiamondInit {
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
         ds.supportedInterfaces[type(IERC173).interfaceId] = true;
-
+        ds.governor = address(0xC4f2aAD729960ce8457B6EFb902FC751A3cB5aC1);
+        ds.governanceToken = address(0x9B006894E41541d0e699ceeDF179B14598dbdbD0);
         // add your own state variables 
         // EIP-2535 specifies that the `diamondCut` function takes two optional 
         // arguments: address _init and bytes calldata _calldata

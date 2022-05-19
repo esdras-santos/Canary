@@ -9,6 +9,7 @@
     "hardhat-ethers": "^1.0.1"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.4.1",
     "@openzeppelin/contracts": "^4.6.0",
     "web3": "^1.7.3"
   }
