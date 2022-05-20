@@ -21,7 +21,7 @@ Hold the NFT and generate an amount of rights token based on the maximum number 
 Has a rights token that can be used as a proof that he has the right to use the data of that NFT for a certain period of time, for that he needs to define the number of days he wants to use the rights token and pay the respective fee.
 
 # Canary Governance Protocol
-Canary Governance Protocol is an incentive based protocol in which all those eligible to vote have equal voting power thus preventing only those with more resources from centralizing power within the governance. "But if everyone has the same voting power why would I buy more governance tokens?"
+Canary Governance Protocol is an incentive based protocol in which all those eligible to vote have equal voting power thus preventing only those with more resources from centralizing power within the governance. "But if everyone has the same voting power why would I buy more governance tokens?", because your reward if you make a good decision is based on your voting power. "But who decides what is a good decision?", the market.
 
 ## How Canary Governance Protocol Works?
 
