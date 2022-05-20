@@ -20,6 +20,25 @@ Hold the NFT and generate an amount of rights token based on the maximum number 
 ### Right Holder:
 Has a rights token that can be used as a proof that he has the right to use the data of that NFT for a certain period of time, for that he needs to define the number of days he wants to use the rights token and pay the respective fee.
 
+# Canary Governance Protocol
+Canary Governance Protocol is an incentive based protocol in which all those eligible to vote have equal voting power thus preventing only those with more resources from centralizing power within the governance. "But if everyone has the same voting power why would I buy more governance tokens?"
+
+## How Canary Governance Protocol Works?
+
+### Proposal Creation
+When a proposal is created, the current value of the governance token is stored (the current value is taken from a Oracles network). The voting period lasts for 1 week.
+
+### Proposal Execution
+When the proposal is approved there is a delay of 1 week to see the response of the market and only after this period can be executed, the value of the token is checked again, if the governance token has appreciated in value (current value higher than the value at the time the proposal was created) then the decision is considered a good decision and all those who voted in favor get a part of the treasury as a reward for the good decision, otherwise all those who voted against receive part of the treasury as a reward. After proposal execution there is a delay of 2 weeks, it means that only one proposal can be made per month.
+
+### Reward
+the reward is based on your voting power and is calculated as follows:
+```solidity
+uint256 percent = yourVotingPower * 100 / totalPower;
+uint256 reward = (treasury * 70 / 100) * percent / 100;
+```
+where `totalPower` is the sum of voters that vote for the better decision. This means that the greater your voting power, the greater your reward if you make the decision that most pleases the market.
+
 ## Run Project
 You can run the project just by clicking in the public link [HERE](https://esdras-santos.github.io/CanaryWebPage/#/) or
 
@@ -36,24 +55,33 @@ git clone https://github.com/esdras-santos/Canary
 flutter run --release
 ```
 
-## Addresses
+## Canary addresses
 
 ### Main address
-Diamond Address: [0x34786005489a9BE178Aeb46895Adc800062D143C](https://v1.aggron.gwscan.com/account/0x34786005489a9be178aeb46895adc800062d143c?search=0x34786005489a9be178aeb46895adc800062d143c) 
+Diamond Address: [0xF1f2ba31c44bECa971600451ceD0090B11382441](https://mumbai.polygonscan.com/address/0xF1f2ba31c44bECa971600451ceD0090B11382441) 
 
 ### Facet addresses
-DiamondCut address:[0x8d5DE0b0Cf2D84b72f42861276E0d8dbc10596C5](https://v1.aggron.gwscan.com/account/0x8d5de0b0cf2d84b72f42861276e0d8dbc10596c5?search=0x8d5de0b0cf2d84b72f42861276e0d8dbc10596c5)
+DiamondCut address: [0x9f1303Ca0043875ceb88618f45C6502d471db28D](https://mumbai.polygonscan.com/address/0x9f1303Ca0043875ceb88618f45C6502d471db28D)
 
-DiamondInit address: [0xCEaA4bDbBC1163C3dE40916976Db128e8b9a6Db1](https://v1.aggron.gwscan.com/account/0xceaa4bdbbc1163c3de40916976db128e8b9a6db1?search=0xceaa4bdbbc1163c3de40916976db128e8b9a6db1)
+DiamondInit address: [0xD71Ff3CBD84888bA5053636570Fd2e8DFC72A36b](https://mumbai.polygonscan.com/address/0xD71Ff3CBD84888bA5053636570Fd2e8DFC72A36b)
 
-Diamond Loupe address: [0x92B87927e5F0E296C84ff6D1Af56A176746E5614](https://v1.aggron.gwscan.com/account/0x92b87927e5f0e296c84ff6d1af56a176746e5614?search=0x92b87927e5f0e296c84ff6d1af56a176746e5614)
+Diamond Loupe address: [0x9D4b3A071E7d1A2d59C98A0c93e4BD12E078a8c4](https://mumbai.polygonscan.com/address/0x9D4b3A071E7d1A2d59C98A0c93e4BD12E078a8c4)
 
-Diamond ownership address: [0x7B494333b43Fa2328b1867bBB0C61Eb7581FDd89](https://v1.aggron.gwscan.com/account/0x7b494333b43fa2328b1867bbb0c61eb7581fdd89?search=0x7b494333b43fa2328b1867bbb0c61eb7581fdd89)
+Diamond ownership address: [0xb4E366484217C69220a21A8aDF3152b5aCD0F049](https://mumbai.polygonscan.com/address/0xb4E366484217C69220a21A8aDF3152b5aCD0F049)
 
-Canary address: [0xC38eE280928095597E57758Db1EE02e3b1f0a1Aa](https://v1.aggron.gwscan.com/account/0xc38ee280928095597e57758db1ee02e3b1f0a1aa?search=0xc38ee280928095597e57758db1ee02e3b1f0a1aa)
+Canary address: [0x91Faf1dDb5F533beC4A98388057a01e309d635ad](https://mumbai.polygonscan.com/address/0x91Faf1dDb5F533beC4A98388057a01e309d635ad)
 
-### Test collection address
-Fruit Collection address: [0x16A2dB28575b5C9973a565AB44A722c44F79B717](https://v1.aggron.gwscan.com/account/0x16a2db28575b5c9973a565ab44a722c44f79b717?search=0x16a2db28575b5c9973a565ab44a722c44f79b717)
+treasury address: [0xDC2e7b8AabF9aDB1233771964995310b920A2ec2](https://mumbai.polygonscan.com/address/0xDC2e7b8AabF9aDB1233771964995310b920A2ec2)
+
+## Canary Governance Addresses
+Governance Token (CAT) address: [0x9B006894E41541d0e699ceeDF179B14598dbdbD0](https://mumbai.polygonscan.com/address/0x9B006894E41541d0e699ceeDF179B14598dbdbD0)
+
+TimeLock address: [0x1232754302B691cE63D2439d2Af18f7d94Dfb604](https://mumbai.polygonscan.com/address/0x1232754302B691cE63D2439d2Af18f7d94Dfb604)
+
+Governor address: [0xC4f2aAD729960ce8457B6EFb902FC751A3cB5aC1](https://mumbai.polygonscan.com/address/0xC4f2aAD729960ce8457B6EFb902FC751A3cB5aC1)
+
+## Test collection address
+Fruit Collection address: [0x2afa0540bA5893A36D45e03725B16c11328e2C8e](https://mumbai.polygonscan.com/address/0x2afa0540bA5893A36D45e03725B16c11328e2C8e)
 
 ## Future Roadmap
-Due to the scarcity control of rights tokens by the NFT owner a market place for rights tokens will be created and probably the tokens that are farthest from their deadline will be exchanged at higher prices.
+in the second stage of the Canary when the price of our governance token (CAT) is registered in the price feed we intend to pass the ownership of the Canary protocol to our governance protocol, our governance protocol is an incentive based protocol in which all those eligible to vote have equal voting power thus preventing only those with more resources from centralizing power within the governance. "But if everyone has the same voting power why would I buy more governance tokens?", our incentive system will benefit you if you have more tokens. More details about our protocol read our readme on our github repository.

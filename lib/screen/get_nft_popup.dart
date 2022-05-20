@@ -6,7 +6,7 @@ import 'package:nftrenter/screen/utils/metamask.dart';
 import 'package:nftrenter/screen/utils/nft_metadata.dart';
 
 import '../nft_mockups.dart';
-import 'utils/CKBUtils.dart';
+import 'utils/TokenUtils.dart';
 import 'utils/interfaces.dart';
 
 class GetNFTPopup extends StatefulWidget {
@@ -136,21 +136,21 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                             ),
                             SizedBox(height: 20),
                             Text(widget.nft["name"]),
-                            Text(
+                            nftdata["name"] == null ? Container() : Text(
                               nftdata["name"],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
-                            SizedBox(height: 20),
-                            Text(
-                              "Description",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            // Text(mock.nfts[widget.index]["description"]),
+                            // SizedBox(height: 20),
+                            // Text(
+                            //   "Description",
+                            //   style: TextStyle(
+                            //       fontWeight: FontWeight.bold, fontSize: 18),
+                            // ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
+                            // // Text(mock.nfts[widget.index]["description"]),
                             Container(
                               padding: const EdgeInsets.only(left: 8.0),
                               width: 360,
@@ -200,9 +200,9 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                                 ),
                                 Text("Daily Price:     ",
                                     style: TextStyle(fontSize: 20)),
-                                Text(toCKBFormat(
+                                Text(EthUtils.formatEther(
                                         "${widget.nft["dailyprice"]}") +
-                                    " CKB"),
+                                    " Matic"),
                               ],
                             ),
                             SizedBox(height: 10),
@@ -213,7 +213,8 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                                 ),
                                 Text("Right total price: ",
                                     style: TextStyle(fontSize: 20)),
-                                Text(toCKBFormat(rentamount) + " KAI"),
+                                Text(EthUtils.formatEther(rentamount) +
+                                    " Matic"),
                               ],
                             ),
                             SizedBox(height: 40),
@@ -230,7 +231,6 @@ class _RentNFTPopupState extends State<GetNFTPopup> {
                                         rentperiod
                                       ],
                                       TransactionOverride(
-                                        gasPrice: BigInt.from(6000000),
                                           value: BigInt.from(
                                               num.parse(rentamount))));
                                   final receipt = tx.wait();

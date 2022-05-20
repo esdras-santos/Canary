@@ -44,11 +44,9 @@ class MetaMaskProvider extends ChangeNotifier {
       //     "facetAddress": "0xAD25D794E88c358C4bE5899d98EB06b1f7080141",
       //     "action": 0,
       //     "functionSelectors":
-      //         getSelectors(a.canaryabi, a.canaryNames)
+              
       //   }
       // ];
-      // print(cut);
-      print(EthUtils.defaultAbiCoder.encode(["address","uint256"], ["0x550Ee22945AaCBEBa678550b53A8B1AF7e923EBe", "10"]));
       notifyListeners();
     }
   }
@@ -68,6 +66,7 @@ class MetaMaskProvider extends ChangeNotifier {
         clear();
       });
     }
+    notifyListeners();
   }
 
   List<String> getSelectors(String abi, List<String> names) {

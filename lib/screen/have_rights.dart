@@ -7,7 +7,7 @@ import 'package:nftrenter/screen/utils/nft_metadata.dart';
 import 'package:flutter_web3/flutter_web3.dart';
 
 import 'show_nft_popup.dart';
-import 'utils/CKBUtils.dart';
+import 'utils/TokenUtils.dart';
 
 class HaveRights extends StatefulWidget {
   const HaveRights({Key? key}) : super(key: key);
@@ -122,9 +122,9 @@ class _HaveRightsState extends State<HaveRights> {
                                       Column(
                                         children: [
                                           Text("Price"),
-                                          Text(toCKBFormat(
+                                          Text(EthUtils.formatEther(
                                                   "${availableNFTs[index]["dailyprice"]}") +
-                                              " CKB"),
+                                              " Matic"),
                                         ],
                                       ),
                                     ],

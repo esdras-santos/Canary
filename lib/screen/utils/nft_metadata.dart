@@ -24,6 +24,11 @@ class NFTMetadata {
         .replaceFirst(r'ipfs://', r'https://ipfs.io/ipfs/')
         .replaceFirst('.json', '.png');
     var imgresp = await httpClient.get(Uri.parse(imageUrl));
-    return {"png": Uint8List.fromList(imgresp.body.codeUnits), "name": json["name"], "description": json["desription"]};
+    
+    return {
+      "png": Uint8List.fromList(imgresp.body.codeUnits),
+      "name": json["name"],
+      "description": json["desription"]
+    };
   }
 }

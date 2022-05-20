@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web3/ethers.dart';
+import 'package:nftrenter/screen/utils/metamask.dart';
 
-import 'utils/CKBUtils.dart';
+import 'utils/TokenUtils.dart';
 import 'utils/interfaces.dart';
 
 class GiveRights extends StatefulWidget {
@@ -18,6 +19,7 @@ class _GiveRightsState extends State<GiveRights> {
   String mp = "";
   String mh = "";
   Interfaces inter = Interfaces();
+  MetaMaskProvider mm = MetaMaskProvider();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -97,19 +99,19 @@ class _GiveRightsState extends State<GiveRights> {
           child: RaisedButton(
             onPressed: () async {
               print(nftid);
-              inter
-                  .erc721(E721)
-                  .send(
-                      "approve",
-                      [
-                        "0x34786005489a9BE178Aeb46895Adc800062D143C",
-                        nftid,
-                      ],
-                      TransactionOverride(
-                          gasPrice: BigInt.from(6000000)))
-                  .then((value) {
-                value.wait();
-                inter
+              print(E721);
+              var owner =
+                  await inter.erc721(E721).call<String>("ownerOf", ["0"]);
+              print(owner);
+              inter.erc721(E721).send(
+                "approve",
+                [
+                  "0xF1f2ba31c44bECa971600451ceD0090B11382441",
+                  nftid,
+                ],
+              ).then((value) {
+                value.wait().then((value) {
+                  inter
                     .canary()
                     .send(
                         "depositNFT",
@@ -119,12 +121,13 @@ class _GiveRightsState extends State<GiveRights> {
                           dailyprice,
                           mp,
                           mh,
-                        ],
-                        TransactionOverride(gasPrice: BigInt.from(6000000)))
+                        ],)
                     .then((value) {
                   value.wait();
                   print(value.hash);
+                  });
                 });
+                
               });
             },
             shape: RoundedRectangleBorder(
@@ -187,7 +190,7 @@ class _GiveRightsState extends State<GiveRights> {
             } else if (field == "id") {
               nftid = value;
             } else if (field == "dp") {
-              dailyprice = toCKB(value);
+              dailyprice = toToken(value);
             } else if (field == "mp") {
               mp = value;
             } else if (field == "mh") {
@@ -197,24 +200,5 @@ class _GiveRightsState extends State<GiveRights> {
         },
       ),
     );
-  }
-
-  String toKAI(String value) {
-    var sv = value.split(".");
-    if (int.parse(sv[0]) > 0) {
-      if (sv[1].length < 18) {
-        for (int i = sv[1].length; i <= 18; i++) {
-          sv[1] = sv[1] + "0";
-        }
-      }
-      return sv[0] + sv[1];
-    } else {
-      if (sv[1].length < 18) {
-        for (int i = sv[1].length; i <= 18; i++) {
-          sv[1] = sv[1] + "0";
-        }
-      }
-      return "${int.parse(sv[1])}";
-    }
   }
 }

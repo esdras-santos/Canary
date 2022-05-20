@@ -4,7 +4,7 @@ import 'package:flutter_web3/ethers.dart';
 import 'package:nftrenter/screen/utils/nft_metadata.dart';
 
 import '../nft_mockups.dart';
-import 'utils/CKBUtils.dart';
+import 'utils/TokenUtils.dart';
 import 'utils/interfaces.dart';
 
 class GaveNFTPopup extends StatefulWidget {
@@ -116,7 +116,7 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                       height: 30,
                                     ),
                                     Text(widget.nft["name"]),
-                                    Text(
+                                    nftdata["name"] == null ? Container(): Text(
                                       nftdata["name"],
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -136,7 +136,7 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                         ),
                                         // this information need to be taken from the network
                                         Text(
-                                          toCKBFormat(snapshot.data!["cr"]) + " CKB",
+                                          EthUtils.formatEther(snapshot.data!["cr"]) + " Matic",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 18),
@@ -157,7 +157,7 @@ class _GaveNFTPopupState extends State<GaveNFTPopup> {
                                         ),
                                         // this information need to be taken from the network
                                         Text(
-                                          toCKBFormat(snapshot.data!["ur"]) + " CKB",
+                                          EthUtils.formatEther(snapshot.data!["ur"]) + " Matic",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 18),
