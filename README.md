@@ -1,5 +1,7 @@
 # Canary
 
+Obs: Canary uses [Diamond proxy pattern](https://eips.ethereum.org/EIPS/eip-2535)
+
 ## Problem 
 
 Imagine you are a singer and you have turned your songs into NFT and you want to sell the copyrights of that song or you are a game designer and in your game the items are NFTs and you want the players to be able to rent the rights to use that item to another player or you have that one piece of NFT art that everybody wants to use but nobody wants to pay the full price for. It would be really nice to make a passive income with that right.
