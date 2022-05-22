@@ -54,8 +54,12 @@ git clone https://github.com/esdras-santos/Canary
 
 3. Inside the repositore type run: 
 ```shell
-flutter run --release
+flutter run -d web-server
 ```
+
+4. Now just copy the link on the output  and past it into your chrome browser (in this case `http://localhost:50736`)
+
+![alt text](https://github.com/esdras-santos/canary_metis/blob/main/run.PNG?raw=true)
 
 ## Canary addresses
 
@@ -86,4 +90,4 @@ Governor address: [0xC4f2aAD729960ce8457B6EFb902FC751A3cB5aC1](https://mumbai.po
 Fruit Collection address: [0x2afa0540bA5893A36D45e03725B16c11328e2C8e](https://mumbai.polygonscan.com/address/0x2afa0540bA5893A36D45e03725B16c11328e2C8e)
 
 ## Future Roadmap
-in the second stage of the Canary when the price of our governance token (CAT) is registered in the price feed we intend to pass the ownership of the Canary protocol to our governance protocol, our governance protocol is an incentive based protocol in which all those eligible to vote have equal voting power thus preventing only those with more resources from centralizing power within the governance. "But if everyone has the same voting power why would I buy more governance tokens?", our incentive system will benefit you if you have more tokens. More details about our protocol read our readme on our github repository.
+in the second stage of the Canary when the price of our governance token (CAT) is registered in the price feed we intend to pass the ownership of the Canary protocol to our governance protocol, our governance protocol is an incentive based protocol in which all those eligible to vote have equal voting power thus preventing only those with more resources from centralizing power within the governance. "But if everyone has the same voting power why would I buy more governance tokens?", our incentive system will benefit you if you have more tokens.
