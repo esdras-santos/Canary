@@ -9,13 +9,11 @@ const {
 
 const { deployDiamond } = require('../scripts/deploy.js')
 
-const { deployCollection } = require('../scripts/deployCollection.js')
 
 const { assert } = require('chai')
 
 describe('DiamondTest', async function () {
   let diamondAddress
-  let collectionAddress
   let diamondCutFacet
   let diamondLoupeFacet
   let ownershipFacet
@@ -25,7 +23,6 @@ describe('DiamondTest', async function () {
   const addresses = []
 
   before(async function () {
-    collectionAddress = await deployCollection()
     diamondAddress = await deployDiamond()
     console.log('\n\n diamond deployed \n\n')
     diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)

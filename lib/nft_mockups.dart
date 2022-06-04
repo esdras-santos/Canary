@@ -11,7 +11,7 @@ class Mockups {
 
     List<Map> availableNFTs = [];
 
-    for (int i = 0; i < anfts.length; i = i + 2) {
+    for (int i = 0; i < anfts.length; i++) {
       
       final dp = await inter.canary().call<BigInt>("dailyPriceOf", [anfts[i]]);
       final owner = await inter.canary().call<String>("ownerOf", [anfts[i]]);
@@ -40,7 +40,7 @@ class Mockups {
     final hr = await inter.canary().call("rightsOf", [holder]);
 
     List<Map> rightsOf = [];
-    for (int i = 0; i < hr.length; i = i + 2) {
+    for (int i = 0; i < hr.length; i++) {
       final dp = await inter.canary().call<BigInt>("dailyPriceOf", [hr[i]]);
       final owner = await inter.canary().call<String>("ownerOf", [hr[i]]);
       final mp = await inter.canary().call<BigInt>("maxPeriodOf", [hr[i]]);
@@ -67,7 +67,7 @@ class Mockups {
     final prop = await inter.canaryro().call("propertiesOf", [owner]);
 
     List<Map> properties = [];
-    for (int i = 0; i < prop.length; i = i + 2) {
+    for (int i = 0; i < prop.length; i++) {
       final dp = await inter.canary().call<BigInt>("dailyPriceOf", [prop[i]]);
 
       final owner = await inter.canary().call<String>("ownerOf", [prop[i]]);
