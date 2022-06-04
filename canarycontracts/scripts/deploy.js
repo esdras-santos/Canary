@@ -1,55 +1,82 @@
-const { existsSync } = require('fs');
-const Web3 = require('web3');
 
+/* global ethers */
+/* eslint prefer-const: "off" */
 
+const { getSelectors, FacetCutAction } = require('./testUtils.js')
 
+async function deployDiamond () {
+  const accounts = await ethers.getSigners()
+  const contractOwner = accounts[0]
 
-let compiledContractArtifact = null;
-const filenames = [`../artifacts/contracts/facets/CanaryFacet.sol/CanaryFacet.json`, `./Fruits`];
-for(const filename of filenames)
-{
-    if(existsSync(filename))
-    {
-        console.log(`Found file: ${filename}`);
-        compiledContractArtifact = require(filename);
-        break;
-    }
-    else
-        console.log(`Checking for file: ${filename}`);
+  // deploy DiamondCutFacet
+  const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
+  const diamondCutFacet = await DiamondCutFacet.deploy()
+  await diamondCutFacet.deployed()
+  console.log('DiamondCutFacet deployed:', diamondCutFacet.address)
+
+  // deploy Diamond
+  const Diamond = await ethers.getContractFactory('Diamond')
+  const diamond = await Diamond.deploy(contractOwner.address, diamondCutFacet.address)
+  await diamond.deployed()
+  console.log('Diamond deployed:', diamond.address)
+
+  // deploy DiamondInit
+  // DiamondInit provides a function that is called when the diamond is upgraded to initialize state variables
+  // Read about how the diamondCut function works here: https://eips.ethereum.org/EIPS/eip-2535#addingreplacingremoving-functions
+  const DiamondInit = await ethers.getContractFactory('DiamondInit')
+  const diamondInit = await DiamondInit.deploy()
+  await diamondInit.deployed()
+  console.log('DiamondInit deployed:', diamondInit.address)
+
+  // deploy facets
+  console.log('')
+  console.log('Deploying facets')
+  const FacetNames = [
+    'DiamondLoupeFacet',
+    'OwnershipFacet',
+    'CanaryFacet',
+    'TreasuryFacet'
+  ]
+  const cut = []
+  for (const FacetName of FacetNames) {
+    const Facet = await ethers.getContractFactory(FacetName)
+    const facet = await Facet.deploy()
+    await facet.deployed()
+    console.log(`${FacetName} deployed: ${facet.address}`)
+    cut.push({
+      facetAddress: facet.address,
+      action: FacetCutAction.Add,
+      functionSelectors: getSelectors(facet)
+    })
+  }
+
+  // upgrade diamond with facets
+  console.log('')
+  console.log('Diamond Cut:', cut)
+  const diamondCut = await ethers.getContractAt('IDiamondCut', diamond.address)
+  let tx
+  let receipt
+  // call to init function
+  let functionCall = diamondInit.interface.encodeFunctionData('init')
+  tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
+  console.log('Diamond cut tx: ', tx.hash)
+  receipt = await tx.wait()
+  if (!receipt.status) {
+    throw Error(`Diamond upgrade failed: ${tx.hash}`)
+  }
+  console.log('Completed diamond cut')
+  return diamond.address
 }
 
-
-const DEPLOYER_PRIVATE_KEY = 'ab3e55fa83f6d5831762643152831eb60444bb05cb1d5e724da41bb5d3e10a4c'; // Replace this with your Ethereum private key with funds on Layer 2.
-
-const web3 = new Web3('https://godwoken-testnet-web3-v1-rpc.ckbapp.dev');
-
-const deployerAccount = web3.eth.accounts.wallet.add(DEPLOYER_PRIVATE_KEY);
-
-(async () => {
-    const balance = BigInt(await web3.eth.getBalance(deployerAccount.address));
-
-    if (balance === 0n) {
-        console.log(`Insufficient balance. Can't deploy contract. Please deposit funds to your Ethereum address: ${deployerAccount.address}`);
-        return;
-    }
-
-    console.log(`Deploying contract...`);
-
-    const deployTx = new web3.eth.Contract(compiledContractArtifact.abi).deploy({
-        data: getBytecodeFromArtifact(compiledContractArtifact),
-        arguments: []
-    }).send({
-        from: deployerAccount.address,
-        gas: 6000000,
-    });
-
-    deployTx.on('transactionHash', hash => console.log(`Transaction hash: ${hash}`));
-
-    const contract = await deployTx;
-
-    console.log(`Deployed contract address: ${contract.options.address}`);
-})();
-
-function getBytecodeFromArtifact(contractArtifact) {
-    return contractArtifact.bytecode || contractArtifact.data?.bytecode?.object
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+if (require.main === module) {
+  deployDiamond()
+    .then(() => process.exit(0))
+    .catch(error => {
+      console.error(error)
+      process.exit(1)
+    })
 }
+
+exports.deployDiamond = deployDiamond

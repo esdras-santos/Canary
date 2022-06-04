@@ -2,10 +2,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract Fruits is ERC721{
+contract Dungeon is ERC721{
     uint256 tokenCounter;
     mapping (uint256=>string) public tokenUri;
-    constructor () public ERC721("Fruits", "FRU"){
+    constructor () public ERC721("DungeonItems", "DI"){
         tokenCounter = 0;
     }
 

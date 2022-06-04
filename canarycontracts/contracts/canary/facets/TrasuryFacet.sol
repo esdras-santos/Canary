@@ -12,7 +12,7 @@ interface Governor{
     function forWeights(uint256 proposalId) external view returns(uint256[] memory);
 }
 
-contract Treasury{
+contract TreasuryFacet{
 
     function setBudget(uint256 _newBudget) external {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
