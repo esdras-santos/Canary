@@ -173,7 +173,7 @@ contract CanaryFacet {
         return ds.dailyPrice[_rightid];
     }
 
-    function maxRightHoldersOf(uint256 _rightid) external view returns (uint256) {
+    function availableRightsOf(uint256 _rightid) external view returns (uint256) {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         return ds.maxRightsHolders[_rightid];
     }

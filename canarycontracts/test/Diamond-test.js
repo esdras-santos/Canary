@@ -24,7 +24,6 @@ describe('DiamondTest', async function () {
 
   before(async function () {
     diamondAddress = await deployDiamond()
-    console.log('\n\n diamond deployed \n\n')
     diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)
     diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
     ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)

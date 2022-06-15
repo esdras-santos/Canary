@@ -6,7 +6,6 @@ async function deployCollection() {
     const Dungeon = await ethers.getContractFactory('Dungeon')
     const dungeon = await Dungeon.deploy()
     await dungeon.deployed()
-    console.log('Dungeon collection deployed ', dungeon.address)
     
     return dungeon.address
 }
