@@ -25,6 +25,8 @@ contract CanaryFacet {
         require(ds.maxtime[_rightid] >= _period,"period is above the max period");
         require(msg.value >= (ds.dailyPrice[_rightid] * _period), "value is less than the required");
         require(ds.maxRightsHolders[_rightid] > 0, "limit of right holders reached");
+        require(ds.rightsPeriod[_rightid][msg.sender] == 0,"already buy this right");
+        require(_period > 0, "period is equal to 0");
         // take 5% of the right amount as fee
         ds.maxRightsHolders[_rightid] = ds.maxRightsHolders[_rightid] - 1;
         ds.treasury += msg.value * 500 / 10000;

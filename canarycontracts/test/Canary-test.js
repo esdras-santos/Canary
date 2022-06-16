@@ -8,13 +8,14 @@ describe('Canary protocol test', async function(){
     let canaryFacet
     let collection
     let owner
+    let accounts
 
     before(async function(){
         diamondAddress = await deployDiamond()
         canaryFacet = await ethers.getContractAt('CanaryFacet', diamondAddress)
         collectionAddress = await deployCollection()
         collection = await ethers.getContractAt('Dungeon', collectionAddress)
-        let accounts = await ethers.getSigners()
+        accounts = await ethers.getSigners()
         owner = accounts[0]
         let tx
         
@@ -100,18 +101,38 @@ describe('Canary protocol test', async function(){
         ).to.be.revertedWith('NFT is not available')
         dailyPrice = await canaryFacet.dailyPriceOf(rights[0])
         await expect(
-            canaryFacet.getRights(rights[0], '31', {value: `${dailyPrice*31}`})
+            canaryFacet.getRights(rights[0], '31', {value: `${Number(dailyPrice)*31}`})
         ).to.be.revertedWith('period is above the max period')
         await expect(
-            canaryFacet.getRights(rights[0], '10', {value: `${dailyPrice*9}`})
+            canaryFacet.getRights(rights[0], '10', {value: `${Number(dailyPrice)*9}`})
         ).to.be.revertedWith('value is less than the required')
 
         dailyPrice = await canaryFacet.dailyPriceOf(rights[2])
-        tx = await canaryFacet.getRights(rights[2], '30', {value: `${Number(dailyPrice)*30}`})
+        tx = await canaryFacet.connect(accounts[1]).getRights(rights[2], '30', {value: `${Number(dailyPrice)*30}`})
         await tx.wait()
 
-        // await expect(
-        //     canaryFacet.getRights(rights[2], '30', {value: `${Number(dailyPrice)*30}`})
-        // ).to.be.revertedWith('limit of right holders reached')
+        await expect(
+            canaryFacet.connect(accounts[2]).getRights(rights[2], '30', {value: `${Number(dailyPrice)*30}`})
+        ).to.be.revertedWith('limit of right holders reached')
+
+        dailyPrice = await canaryFacet.dailyPriceOf(rights[1])
+        tx = await canaryFacet.connect(accounts[1]).getRights(rights[1], '30', {value: `${Number(dailyPrice)*30}`})
+        await tx.wait()
+
+        await expect(
+            canaryFacet.connect(accounts[1]).getRights(rights[1], '30', {value: `${Number(dailyPrice)*30}`})
+        ).to.be.revertedWith('already buy this right')
+
+        await expect(
+            canaryFacet.getRights(rights[1], '0', {value: `${Number(dailyPrice)*30}`})
+        ).to.be.revertedWith('period is equal to 0')
+
+        let rightsOf
+        rightsOf = await canaryFacet.rightsOf(accounts[1].address)
+        assert.equal(rightsOf[0].value, rights[2].value)
+    })
+
+    it('should test the setAvailability function', async function(){
+        
     })
 })
