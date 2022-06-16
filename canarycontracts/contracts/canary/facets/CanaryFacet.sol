@@ -33,7 +33,7 @@ contract CanaryFacet {
         ds.rightsOver[msg.sender].push(_rightid);
         ds.deadline[_rightid][msg.sender] = block.timestamp + (1 days * _period);
         // the bigger deadline will always be in front
-        if(block.timestamp + (1 days * _period) > ds.deadline[_rightid][ds.rightHolders[_rightid][0]]){
+        if(ds.rightHolders[_rightid].length > 0 && block.timestamp + (1 days * _period) > ds.deadline[_rightid][ds.rightHolders[_rightid][0]]){
             address aux = ds.rightHolders[_rightid][0];
             ds.rightHolders[_rightid][0] = msg.sender;
             ds.rightHolders[_rightid].push(aux);
