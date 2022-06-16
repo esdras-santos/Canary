@@ -15,7 +15,7 @@ contract CanaryFacet {
 
     modifier isNFTOwner(uint256 _rightid){
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-        require(ds.owner[_rightid] == msg.sender);
+        require(ds.owner[_rightid] == msg.sender, "only the NFT Owner");
         _;
     }
 
@@ -118,7 +118,9 @@ contract CanaryFacet {
         external isNFTOwner(_rightid) 
     {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-        require(ds.availableRights[_nftindex] == _rightid, "wrong index for rightid");
+        if(ds.isAvailable[_rightid] == true){
+            require(ds.availableRights[_nftindex] == _rightid, "wrong index for rightid");
+        }
         if(_available == false){
             ds.availableRights[_nftindex] = ds.availableRights[ds.availableRights.length - 1];
             ds.availableRights.pop();

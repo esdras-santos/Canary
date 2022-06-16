@@ -9,6 +9,7 @@ describe('Canary protocol test', async function(){
     let collection
     let owner
     let accounts
+    let rights
 
     before(async function(){
         diamondAddress = await deployDiamond()
@@ -17,6 +18,7 @@ describe('Canary protocol test', async function(){
         collection = await ethers.getContractAt('Dungeon', collectionAddress)
         accounts = await ethers.getSigners()
         owner = accounts[0]
+        
         let tx
         
         tx = await collection.createCollectible("ipfs://bafkreihxwh3yekjq2bakdje4okxpdlsdqlua4jur4iogv2kbyzr6lnawkm")
@@ -41,12 +43,13 @@ describe('Canary protocol test', async function(){
         await tx.wait()
         tx = await canaryFacet.depositNFT(collectionAddress, '2', '20000000000000000', '30', '1')
         await tx.wait()
+        rights = await canaryFacet.getAvailableNFTs()
     })
 
     it('should test the deposit of NFTs into the protocol', async function(){
-        let rights
+        
         let NFTOwner
-        rights = await canaryFacet.getAvailableNFTs()
+        
         assert.equal(rights.length, 3)
         NFTOwner = await canaryFacet.ownerOf(rights[0])        
         assert.equal(NFTOwner, owner.address)
@@ -92,10 +95,8 @@ describe('Canary protocol test', async function(){
     })
 
     it('should test the getRights method', async function(){
-        let rights
         let tx
         let dailyPrice
-        rights = await canaryFacet.getAvailableNFTs()
         await expect(
             canaryFacet.getRights('00000000000000000000000000000000000000000000000000000000000000000000', '10', {value: '0'})
         ).to.be.revertedWith('NFT is not available')
@@ -133,6 +134,42 @@ describe('Canary protocol test', async function(){
     })
 
     it('should test the setAvailability function', async function(){
+        let availability
+        availability = await canaryFacet.availabilityOf(rights[1])
+        assert.equal(availability, true)
+        await expect(
+            canaryFacet.connect(accounts[1]).setAvailability(rights[1], false,'1')
+        ).to.be.revertedWith('only the NFT Owner')
+        
+        await expect(
+            canaryFacet.setAvailability(rights[1], false,'2')
+        ).to.be.revertedWith('wrong index for rightid')
+
+        let aux = rights[1]
+        let tx
+        tx = await canaryFacet.setAvailability(rights[1], false,'1')
+        await tx.wait()
+
+        rights = await canaryFacet.getAvailableNFTs()
+        assert.equal(rights.length, 2)
+
+        availability = await canaryFacet.availabilityOf(aux)
+        assert.equal(availability, false)
+
+        // in this case the index doesn't matter
+        tx = await canaryFacet.setAvailability(aux, true,'0')
+        await tx.wait()
+
+        rights = await canaryFacet.getAvailableNFTs()
+        assert.equal(rights.length, 3)
+
+        availability = await canaryFacet.availabilityOf(rights[2])
+        assert.equal(availability, true)
+
+        assert.equal(aux.value, rights[2].value)
+    })
+
+    it('should test the withdrawRoyalties function', async function(){
         
     })
 })
