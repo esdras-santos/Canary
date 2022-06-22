@@ -170,6 +170,57 @@ describe('Canary protocol test', async function(){
     })
 
     it('should test the withdrawRoyalties function', async function(){
+        let tx
+        let dailyPrice
+        let rightHolders
+        dailyPrice = await canaryFacet.dailyPriceOf(rights[0])
+
+        tx = await canaryFacet.connect(accounts[1]).getRights(rights[0], '1', {value: `${Number(dailyPrice)*1}`})
+        await tx.wait()
+        rightHolders = await canaryFacet.rightHoldersOf(rights[0])
+        assert.equal(accounts[1].address, rightHolders[0])
+
+        tx = await canaryFacet.connect(accounts[2]).getRights(rights[0], '3', {value: `${Number(dailyPrice)*3}`})
+        await tx.wait()
+        rightHolders = await canaryFacet.rightHoldersOf(rights[0])
+        assert.equal(accounts[2].address, rightHolders[0])
+
+        tx = await canaryFacet.connect(accounts[3]).getRights(rights[0], '5', {value: `${Number(dailyPrice)*5}`})
+        await tx.wait()
+        rightHolders = await canaryFacet.rightHoldersOf(rights[0])
+        assert.equal(accounts[3].address, rightHolders[0])
+
+        var currentDateTime = new Date();
+        await network.provider.send("evm_setNextBlockTimestamp", [(currentDateTime.getTime()/ 1000) + (86400 * 30)])
+        await network.provider.send("evm_mine")
+        const latestBlock = await ethers.provider.getBlock("latest")
+        console.log(latestBlock.timestamp)
+
         
+        let deadlineList = []
+        let rhindexes = []
+        let roIndexes = []
+        let confirmedRoyalties = 0
+        let i = 0
+        for(rh of rightHolders){
+            let deadline = await canaryFacet.holderDeadline(rights[0], rh)
+            let rightsPeriod = await canaryFacet.rightsPeriodOf(rights[0], rh)
+
+            if(Number(deadline) < Number(latestBlock.timestamp)){
+                deadlineList.push(rh)
+                rhindexes.push(i)
+                confirmedRoyalties += Number(dailyPrice) * Number(rightsPeriod)
+                let rightsOver = await canaryFacet.rightsOf(rh) 
+                let j = 0
+                for(ro of rightsOver){
+                    if(ro === rights[0]){
+                        roIndexes.push(j)
+                    }
+                    j++
+                }
+            }
+            i++
+        }
+        console.log(confirmedRoyalties)
     })
 })
