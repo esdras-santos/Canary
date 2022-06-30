@@ -30,6 +30,7 @@ library LibDiamond {
         address governanceToken;
         address governor;
         uint256[] availableRights;
+        mapping (uint256=>uint256) highestDeadline;
         mapping (address=>uint256) dividends;
         // tracks price before approval of the proposal
         mapping (uint256=>uint256) beforeProposal;
@@ -56,6 +57,8 @@ library LibDiamond {
         mapping (uint256=>mapping (address=>uint256)) deadline;
         // receive erc721 address, nftid, and rights buyer address and return rights period in days
         mapping (uint256=>mapping (address=>uint256)) rightsPeriod;
+
+        mapping (uint256=>mapping (address=>mapping (address=>bool))) validated;
 
         // maps function selector to the facet address and
         // the position of the selector in the facetFunctionSelectors.selectors array
